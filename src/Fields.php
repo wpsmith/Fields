@@ -8,16 +8,18 @@
  * Any modifications to or software including (via compiler) GPL-licensed code must also be made
  * available under the GPL along with build & install instructions.
  *
- * @package    WPS\Core
+ * @package    WPS\WP
  * @author     Travis Smith <t@wpsmith.net>
- * @copyright  2015-2018 Travis Smith
+ * @copyright  2015-2019 Travis Smith
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU Public License v2
  * @link       https://github.com/wpsmith/WPS
  * @version    1.0.0
  * @since      0.1.0
  */
 
-namespace WPS\Core;
+namespace WPS\WP;
+
+use WPS\Core\Singleton;
 
 use StoutLogic\AcfBuilder\FieldsBuilder;
 
@@ -26,13 +28,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPS\Core\Fields' ) ) {
+if ( ! class_exists( __NAMESPACE__ . '\Fields' ) ) {
 	/**
 	 * Fields Class
 	 *
 	 * Assists in using ACF.
 	 *
-	 * @package WPS\Core
+	 * @package WPS\WP
 	 * @author  Travis Smith <t@wpsmith.net>
 	 */
 	class Fields extends Singleton {
@@ -53,8 +55,15 @@ if ( ! class_exists( 'WPS\Core\Fields' ) ) {
 
 		/**
 		 * Fields constructor.
+		 *
+		 * @throws \Exception
 		 */
 		protected function __construct() {
+
+			if ( ! class_exists( 'ACF' ) ) {
+				throw new \Exception( 'ACF does not exist.' );
+			}
+
 			if ( did_action( 'init' ) || doing_action( 'init' ) ) {
 				$this->create();
 			} else {
@@ -105,8 +114,8 @@ if ( ! class_exists( 'WPS\Core\Fields' ) ) {
 		/**
 		 * Instantiates a new FieldsBuilder
 		 *
-		 * @param string $key  Key for fields.
-		 * @param array  $args Args for fields.
+		 * @param string $key Key for fields.
+		 * @param array $args Args for fields.
 		 *
 		 * @return FieldsBuilder Fields builder.
 		 */
