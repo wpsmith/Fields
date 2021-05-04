@@ -21,7 +21,6 @@ namespace WPS\WP;
 
 use WPS\Core\Singleton;
 use StoutLogic\AcfBuilder\FieldsBuilder;
-use function add_action;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,14 +43,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Fields' ) ) {
 		 *
 		 * @var array Array of StoutLogic\AcfBuilder\FieldsBuilder
 		 */
-		public $builder = array();
+		public array $builder = array();
 
 		/**
 		 * Whether ACF is instantiated.
 		 *
 		 * @var bool
 		 */
-		public $instantiated = false;
+		public bool $instantiated = false;
 
 		/**
 		 * Fields constructor.
@@ -64,10 +63,10 @@ if ( ! class_exists( __NAMESPACE__ . '\Fields' ) ) {
 				throw new \Exception( 'ACF does not exist.' );
 			}
 
-			if ( did_action( 'init' ) || doing_action( 'init' ) ) {
+			if ( \did_action( 'init' ) || \doing_action( 'init' ) ) {
 				$this->create();
 			} else {
-				add_action( 'init', array( $this, 'create' ), ~PHP_INT_MAX );
+				\add_action( 'init', array( $this, 'create' ), ~PHP_INT_MAX );
 			}
 		}
 
@@ -89,24 +88,24 @@ if ( ! class_exists( __NAMESPACE__ . '\Fields' ) ) {
 			 *
 			 * @param Fields $this Fields object to builder the Fields Builder.
 			 */
-			do_action( 'core_acf_fields', $this );
+			\do_action( 'core_acf_fields', $this );
 
-			if ( did_action( 'acf/init' ) || doing_action( 'acf/init' ) ) {
+			if ( \did_action( 'acf/init' ) || \doing_action( 'acf/init' ) ) {
 				$this->init_fields();
 			} else {
-				add_action( 'acf/init', array( $this, 'init_fields' ) );
+				\add_action( 'acf/init', array( $this, 'init_fields' ) );
 			}
 		}
 
 		/**
 		 * Adds the custom fields/metaboxes
 		 *
-		 * @uses acf_add_local_field_group
+		 * @uses \acf_add_local_field_group
 		 */
 		public function init_fields() {
 			foreach ( $this->builder as $fields ) {
-				if ( function_exists( 'acf_add_local_field_group' ) ) {
-					acf_add_local_field_group( $fields->build() );
+				if ( function_exists( '\acf_add_local_field_group' ) ) {
+					\acf_add_local_field_group( $fields->build() );
 				}
 			}
 		}
@@ -120,9 +119,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Fields' ) ) {
 		 * @return FieldsBuilder Fields builder.
 		 */
 		public function new_fields_builder( $key = '', $args = array() ) {
-
 			return new FieldsBuilder( $key, $args );
-
 		}
 
 	}
